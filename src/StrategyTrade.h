@@ -1,21 +1,19 @@
 #pragma once
-// ---- ºÚµ•≤ﬂ¬‘Ωª“◊µƒ¿‡ ---- //
+// ---- ÁÆÄÂçïÁ≠ñÁï•‰∫§ÊòìÁöÑÁ±ª ---- //
 
-#include <functional>
-#include "CTP_API/ThostFtdcUserApiStruct.h"
-#include "TickToKlineHelper.h"
 #include "CustomTradeSpi.h"
+#include "TickToKlineHelper.h"
+#include "ctp/ThostFtdcUserApiStruct.h"
+#include <functional>
 
-typedef void(*reqOrderInsertFun)(
-	TThostFtdcInstrumentIDType instrumentID,
-	TThostFtdcPriceType price,
-	TThostFtdcVolumeType volume,
-	TThostFtdcDirectionType direction);
+typedef void (*reqOrderInsertFun)(TThostFtdcInstrumentIDType instrumentID,
+                                  TThostFtdcPriceType price,
+                                  TThostFtdcVolumeType volume,
+                                  TThostFtdcDirectionType direction);
 
-using ReqOrderInsertFunctionType = std::function<
-	void(TThostFtdcInstrumentIDType instrumentID,
-	TThostFtdcPriceType price,
-	TThostFtdcVolumeType volume,
-	TThostFtdcDirectionType direction)>;
+using ReqOrderInsertFunctionType = std::function<void(
+    TThostFtdcInstrumentIDType instrumentID, TThostFtdcPriceType price,
+    TThostFtdcVolumeType volume, TThostFtdcDirectionType direction)>;
 
-void StrategyCheckAndTrade(TThostFtdcInstrumentIDType instrumentID, CustomTradeSpi *customTradeSpi);
+void StrategyCheckAndTrade(TThostFtdcInstrumentIDType instrumentID,
+                           CustomTradeSpi *customTradeSpi);

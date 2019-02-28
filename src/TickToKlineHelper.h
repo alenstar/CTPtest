@@ -1,28 +1,30 @@
 #pragma once
-// ---- ¼ÆËãkÏßµÄÀà ---- //
+// ---- è®¡ç®—kçº¿çš„ç±» ---- //
 
-#include <vector>
+#include "ctp/ThostFtdcUserApiStruct.h"
 #include <string>
+#include <vector>
 
-// kÏßÊı¾İ½á¹¹
-struct KLineDataType
-{
-	double open_price;   // ¿ª
-	double high_price;   // ¸ß
-	double low_price;    // µÍ
-	double close_price;  // ÊÕ
-	int volume;          // Á¿
+// kçº¿æ•°æ®ç»“æ„
+struct KLineDataType {
+    double open_price;  // å¼€
+    double high_price;  // é«˜
+    double low_price;   // ä½
+    double close_price; // æ”¶
+    int volume;         // é‡
 };
 
-class TickToKlineHelper
-{
+class TickToKlineHelper {
 public:
-	// ´Ó±¾µØÊı¾İ¹¹½¨kÏß£¬²¢´æ´¢µ½±¾µØ(¼Ù¶¨±¾µØÊı¾İÃ»ÓĞ¶ª°ü)
-	void KLineFromLocalData(const std::string &sFilePath, const std::string &dFilePath); 
-	// ´ÓÊµÊ±Êı¾İ¹¹½¨kÏß
-	void KLineFromRealtimeData(CThostFtdcDepthMarketDataField *pDepthMarketData);
+    // ä»æœ¬åœ°æ•°æ®æ„å»ºkçº¿ï¼Œå¹¶å­˜å‚¨åˆ°æœ¬åœ°(å‡å®šæœ¬åœ°æ•°æ®æ²¡æœ‰ä¸¢åŒ…)
+    void KLineFromLocalData(const std::string &sFilePath,
+                            const std::string &dFilePath);
+    // ä»å®æ—¶æ•°æ®æ„å»ºkçº¿
+    void
+    KLineFromRealtimeData(CThostFtdcDepthMarketDataField *pDepthMarketData);
+
 public:
-	std::vector<double> m_priceVec; // ´æ´¢1·ÖÖÓµÄ¼Û¸ñ
-	std::vector<int> m_volumeVec; // ´æ´¢1·ÖÖÓµÄ³É½»Á¿
-	std::vector<KLineDataType> m_KLineDataArray;
+    std::vector<double> m_priceVec; // å­˜å‚¨1åˆ†é’Ÿçš„ä»·æ ¼
+    std::vector<int> m_volumeVec;   // å­˜å‚¨1åˆ†é’Ÿçš„æˆäº¤é‡
+    std::vector<KLineDataType> m_KLineDataArray;
 };

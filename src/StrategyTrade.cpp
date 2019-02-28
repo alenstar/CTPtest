@@ -8,20 +8,20 @@
 
 extern std::unordered_map<std::string, TickToKlineHelper> g_KlineHash;
 
-// Ïß³Ì»¥³âÁ¿
+// çº¿ç¨‹äº’æ–¥é‡
 std::mutex marketDataMutex;
 
 void StrategyCheckAndTrade(TThostFtdcInstrumentIDType instrumentID, CustomTradeSpi *customTradeSpi)
 {
-	// ¼ÓËø
+	// åŠ é”
 	std::lock_guard<std::mutex> lk(marketDataMutex);
 	TickToKlineHelper tickToKlineObject = g_KlineHash.at(std::string(instrumentID));
-	// ²ßÂÔ
+	// ç­–ç•¥
 	std::vector<double> priceVec = tickToKlineObject.m_priceVec;
 	if (priceVec.size() >= 3)
 	{
 		int len = priceVec.size();
-		// ×îºóÁ¬ĞøÈı¸öÉÏÕÇ¾ÍÂò¿ª²Ö,·´Ö®¾ÍÂô¿ª²Ö,ÕâÀïÔİÊ±ÓÃ×îºóÒ»¸ö¼Û¸ñÏÂµ¥
+		// æœ€åè¿ç»­ä¸‰ä¸ªä¸Šæ¶¨å°±ä¹°å¼€ä»“,åä¹‹å°±å–å¼€ä»“,è¿™é‡Œæš‚æ—¶ç”¨æœ€åä¸€ä¸ªä»·æ ¼ä¸‹å•
 		if (priceVec[len - 1] > priceVec[len - 2] && priceVec[len - 2] > priceVec[len - 3])
 			customTradeSpi->reqOrderInsert(instrumentID, priceVec[len - 1], 1, THOST_FTDC_D_Buy);
 		else if (priceVec[len - 1] < priceVec[len - 2] && priceVec[len - 2] < priceVec[len - 3])
