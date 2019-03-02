@@ -1,5 +1,4 @@
 #include "CustomMdSpi.h"
-#include "EncodeConv.h"
 #include "TickToKlineHelper.h"
 #include <cstring>
 #include <fstream>

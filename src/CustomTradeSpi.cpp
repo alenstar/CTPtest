@@ -1,5 +1,4 @@
 #include "CustomTradeSpi.h"
-#include "EncodeConv.h"
 #include "StrategyTrade.h"
 #include <chrono>
 #include <cstring>
