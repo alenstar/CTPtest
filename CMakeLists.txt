@@ -14,6 +14,13 @@ set(APP_NAME ${PROJECT_NAME})
 # TODO OP check how this works on multiple configurations generators
 # available configurations in multiple configurations enabled generators
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
+
+if (NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
+  if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
+  endif()
+endif()
+
 #message("CMAKE_CFG_INTDIR = ${CMAKE_CFG_INTDIR}")
 
 # 检查编译目录和源码是否为同一目录， 如果是则提示错误
@@ -34,7 +41,7 @@ endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
-#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/ctp)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 #add_subdirectory(spdlog)
 #add_subdirectory(util)
@@ -42,7 +49,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 #add_subdirectory(proto)
 
 add_subdirectory(ctp)
-LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/ctp)
+LINK_DIRECTORIES(${CMAKE_BINARY_DIR})
 set(APP_LIBS thosttraderapi thostmduserapi)
 set(SYS_LIBS rt sqlite3 pthread)
 if(WIN32)
@@ -56,6 +63,11 @@ endif()
 #add_subdirectory(example)
 
 add_subdirectory(src)
+
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+set(CMAKE_INSTALL_RPATH "./")
+add_executable(trader main.cpp)
+target_link_libraries(trader ctpwrapper ${APP_LIBS} ${SYS_LIBS})
 
 # used by doc home and in packaging
 #set(README_FILE ${PROJECT_SOURCE_DIR}/README.md)
