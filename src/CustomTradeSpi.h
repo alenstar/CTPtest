@@ -9,6 +9,8 @@ class CustomTradeSpi : public CThostFtdcTraderSpi {
   public:
     CustomTradeSpi();
     bool init( const std::string &frontAddr );
+    void join();
+    void release();
     ///当客户端与交易后台建立起通信连接时（还未登录前），该方法被调用。
     void OnFrontConnected();
 

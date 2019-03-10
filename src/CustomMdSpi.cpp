@@ -29,6 +29,10 @@ bool CustomMdSpi::init( const std::string &frontAddr ) {
     return true;
 }
 
+void CustomMdSpi::join() { _pMdUserApi->Join(); }
+
+void CustomMdSpi::release() { _pMdUserApi->Release(); }
+
 void CustomMdSpi::OnFrontConnected() {
     std::cout << "=====建立网络连接成功=====" << std::endl;
     // 开始登录

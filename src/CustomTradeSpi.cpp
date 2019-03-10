@@ -29,15 +29,18 @@ CustomTradeSpi::CustomTradeSpi()
     _pTradeUserApi = CThostFtdcTraderApi::CreateFtdcTraderApi(); // 创建交易实例
     // CThostFtdcTraderSpi *pTradeSpi = new CustomTradeSpi;
     _pTradeUserApi->RegisterSpi( this ); // 注册事件类
-
-    _pTradeUserApi->SubscribePublicTopic( THOST_TERT_RESTART );  // 订阅公共流
-    _pTradeUserApi->SubscribePrivateTopic( THOST_TERT_RESTART ); // 订阅私有流
 }
 
 bool CustomTradeSpi::init( const std::string &frontAddr ) {
     _pTradeUserApi->RegisterFront( const_cast<char *>( frontAddr.data() ) );
+    _pTradeUserApi->SubscribePublicTopic( THOST_TERT_RESTART );  // 订阅公共流
+    _pTradeUserApi->SubscribePrivateTopic( THOST_TERT_RESTART ); // 订阅私有流
     _pTradeUserApi->Init();
 }
+
+void CustomTradeSpi::join() { _pTradeUserApi->Join(); }
+
+void CustomTradeSpi::release() { _pTradeUserApi->Release(); }
 
 void CustomTradeSpi::OnFrontConnected() {
     std::cout << "=====建立网络连接成功=====" << std::endl;
