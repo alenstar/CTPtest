@@ -2,10 +2,13 @@
 // ---- 派生的交易类 ---- //
 #include "CtpErrorCode.h"
 #include "ctp/ThostFtdcTraderApi.h"
+#include <iostream>
 
 class CustomTradeSpi : public CThostFtdcTraderSpi {
     // ---- ctp_api部分回调接口 ---- //
   public:
+    CustomTradeSpi();
+    bool init( const std::string &frontAddr );
     ///当客户端与交易后台建立起通信连接时（还未登录前），该方法被调用。
     void OnFrontConnected();
 
@@ -71,8 +74,9 @@ class CustomTradeSpi : public CThostFtdcTraderSpi {
     void reqQueryInvestorPosition(); // 请求查询投资者持仓
     void reqOrderInsert();           // 请求报单录入
 
-    void reqOrderAction( CThostFtdcOrderField *pOrder );     // 请求报单操作
-    bool isErrorRspInfo( CThostFtdcRspInfoField *pRspInfo ); // 是否收到错误信息
-    bool isMyOrder( CThostFtdcOrderField *pOrder );          // 是否我的报单回报
-    bool isTradingOrder( CThostFtdcOrderField *pOrder );     // 是否正在交易的报单
+    void                 reqOrderAction( CThostFtdcOrderField *pOrder );     // 请求报单操作
+    bool                 isErrorRspInfo( CThostFtdcRspInfoField *pRspInfo ); // 是否收到错误信息
+    bool                 isMyOrder( CThostFtdcOrderField *pOrder );          // 是否我的报单回报
+    bool                 isTradingOrder( CThostFtdcOrderField *pOrder );     // 是否正在交易的报单
+    CThostFtdcTraderApi *_pTradeUserApi{nullptr};                            // 交易指针
 };

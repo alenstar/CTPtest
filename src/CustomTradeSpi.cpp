@@ -23,6 +23,22 @@ TThostFtdcOrderRefType  order_ref;      //报单引用
 time_t                  lOrderTime;
 time_t                  lOrderOkTime;
 
+CustomTradeSpi::CustomTradeSpi()
+    : CThostFtdcTraderSpi() {
+
+    _pTradeUserApi = CThostFtdcTraderApi::CreateFtdcTraderApi(); // 创建交易实例
+    // CThostFtdcTraderSpi *pTradeSpi = new CustomTradeSpi;
+    _pTradeUserApi->RegisterSpi( this ); // 注册事件类
+
+    _pTradeUserApi->SubscribePublicTopic( THOST_TERT_RESTART );  // 订阅公共流
+    _pTradeUserApi->SubscribePrivateTopic( THOST_TERT_RESTART ); // 订阅私有流
+}
+
+bool CustomTradeSpi::init( const std::string &frontAddr ) {
+    _pTradeUserApi->RegisterFront( const_cast<char *>( frontAddr.data() ) );
+    _pTradeUserApi->Init();
+}
+
 void CustomTradeSpi::OnFrontConnected() {
     std::cout << "=====建立网络连接成功=====" << std::endl;
     // 开始登录
@@ -200,7 +216,7 @@ void CustomTradeSpi::reqUserLogin() {
     strcpy( loginReq.UserID, gInvesterID );
     strcpy( loginReq.Password, gInvesterPassword );
     static int requestID = 0; // 请求编号
-    int        rt        = g_pTradeUserApi->ReqUserLogin( &loginReq, requestID );
+    int        rt        = _pTradeUserApi->ReqUserLogin( &loginReq, requestID );
     if ( !rt )
         std::cout << ">>>>>>发送登录请求成功" << std::endl;
     else
@@ -213,7 +229,7 @@ void CustomTradeSpi::reqUserLogout() {
     strcpy( logoutReq.BrokerID, gBrokerID );
     strcpy( logoutReq.UserID, gInvesterID );
     static int requestID = 0; // 请求编号
-    int        rt        = g_pTradeUserApi->ReqUserLogout( &logoutReq, requestID );
+    int        rt        = _pTradeUserApi->ReqUserLogout( &logoutReq, requestID );
     if ( !rt )
         std::cout << ">>>>>>发送登出请求成功" << std::endl;
     else
@@ -226,7 +242,7 @@ void CustomTradeSpi::reqSettlementInfoConfirm() {
     strcpy( settlementConfirmReq.BrokerID, gBrokerID );
     strcpy( settlementConfirmReq.InvestorID, gInvesterID );
     static int requestID = 0; // 请求编号
-    int        rt        = g_pTradeUserApi->ReqSettlementInfoConfirm( &settlementConfirmReq, requestID );
+    int        rt        = _pTradeUserApi->ReqSettlementInfoConfirm( &settlementConfirmReq, requestID );
     if ( !rt )
         std::cout << ">>>>>>发送投资者结算结果确认请求成功" << std::endl;
     else
@@ -238,7 +254,7 @@ void CustomTradeSpi::reqQueryInstrument() {
     memset( &instrumentReq, 0, sizeof( instrumentReq ) );
     strcpy( instrumentReq.InstrumentID, g_pTradeInstrumentID );
     static int requestID = 0; // 请求编号
-    int        rt        = g_pTradeUserApi->ReqQryInstrument( &instrumentReq, requestID );
+    int        rt        = _pTradeUserApi->ReqQryInstrument( &instrumentReq, requestID );
     if ( !rt )
         std::cout << ">>>>>>发送合约查询请求成功" << std::endl;
     else
@@ -252,7 +268,7 @@ void CustomTradeSpi::reqQueryTradingAccount() {
     strcpy( tradingAccountReq.InvestorID, gInvesterID );
     static int requestID = 0;                                        // 请求编号
     std::this_thread::sleep_for( std::chrono::milliseconds( 700 ) ); // 有时候需要停顿一会才能查询成功
-    int rt = g_pTradeUserApi->ReqQryTradingAccount( &tradingAccountReq, requestID );
+    int rt = _pTradeUserApi->ReqQryTradingAccount( &tradingAccountReq, requestID );
     if ( !rt )
         std::cout << ">>>>>>发送投资者资金账户查询请求成功" << std::endl;
     else
@@ -267,7 +283,7 @@ void CustomTradeSpi::reqQueryInvestorPosition() {
     strcpy( postionReq.InstrumentID, g_pTradeInstrumentID );
     static int requestID = 0;                                        // 请求编号
     std::this_thread::sleep_for( std::chrono::milliseconds( 700 ) ); // 有时候需要停顿一会才能查询成功
-    int rt = g_pTradeUserApi->ReqQryInvestorPosition( &postionReq, requestID );
+    int rt = _pTradeUserApi->ReqQryInvestorPosition( &postionReq, requestID );
     if ( !rt )
         std::cout << ">>>>>>发送投资者持仓查询请求成功" << std::endl;
     else
@@ -313,7 +329,7 @@ void CustomTradeSpi::reqOrderInsert() {
     orderInsertReq.UserForceClose = 0;
 
     static int requestID = 0; // 请求编号
-    int        rt        = g_pTradeUserApi->ReqOrderInsert( &orderInsertReq, ++requestID );
+    int        rt        = _pTradeUserApi->ReqOrderInsert( &orderInsertReq, ++requestID );
     if ( !rt )
         std::cout << ">>>>>>发送报单录入请求成功" << std::endl;
     else
@@ -360,7 +376,7 @@ void CustomTradeSpi::reqOrderInsert( TThostFtdcInstrumentIDType instrumentID, TT
     orderInsertReq.UserForceClose = 0;
 
     static int requestID = 0; // 请求编号
-    int        rt        = g_pTradeUserApi->ReqOrderInsert( &orderInsertReq, ++requestID );
+    int        rt        = _pTradeUserApi->ReqOrderInsert( &orderInsertReq, ++requestID );
     if ( !rt )
         std::cout << ">>>>>>发送报单录入请求成功" << std::endl;
     else
@@ -402,7 +418,7 @@ void CustomTradeSpi::reqOrderAction( CThostFtdcOrderField *pOrder ) {
     ///合约代码
     strcpy( orderActionReq.InstrumentID, pOrder->InstrumentID );
     static int requestID = 0; // 请求编号
-    int        rt        = g_pTradeUserApi->ReqOrderAction( &orderActionReq, ++requestID );
+    int        rt        = _pTradeUserApi->ReqOrderAction( &orderActionReq, ++requestID );
     if ( !rt )
         std::cout << ">>>>>>发送报单操作请求成功" << std::endl;
     else

@@ -2,11 +2,14 @@
 // ---- 派生的行情类 ---- //
 #include "CtpErrorCode.h"
 #include "ctp/ThostFtdcMdApi.h"
+#include <iostream>
 #include <vector>
 
 class CustomMdSpi : public CThostFtdcMdSpi {
     // ---- 继承自CTP父类的回调接口并实现 ---- //
   public:
+    CustomMdSpi();
+    bool init( const std::string &frontAddr );
     ///当客户端与交易后台建立起通信连接时（还未登录前），该方法被调用。
     void OnFrontConnected();
 
@@ -55,4 +58,7 @@ class CustomMdSpi : public CThostFtdcMdSpi {
 
     ///询价通知
     void OnRtnForQuoteRsp( CThostFtdcForQuoteRspField *pForQuoteRsp );
+
+  private:
+    CThostFtdcMdApi *_pMdUserApi{nullptr}; // 行情指针
 };

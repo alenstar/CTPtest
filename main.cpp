@@ -53,22 +53,28 @@ int main() {
 
     // 初始化行情线程
     cout << "初始化行情..." << endl;
-    g_pMdUserApi                = CThostFtdcMdApi::CreateFtdcMdApi(); // 创建行情实例
-    CThostFtdcMdSpi *pMdUserSpi = new CustomMdSpi;                    // 创建行情回调实例
+    // g_pMdUserApi                = CThostFtdcMdApi::CreateFtdcMdApi(); // 创建行情实例
+    CustomMdSpi *pMdUserSpi = new CustomMdSpi; // 创建行情回调实例
+    pMdUserSpi->init( gMdFrontAddr );
+    /*
     g_pMdUserApi->RegisterSpi( pMdUserSpi );                          // 注册事件类
     g_pMdUserApi->RegisterFront( gMdFrontAddr );                      // 设置行情前置地址
     g_pMdUserApi->Init();                                             // 连接运行
+    */
 
     // 初始化交易线程
     cout << "初始化交易..." << endl;
-    g_pTradeUserApi = CThostFtdcTraderApi::CreateFtdcTraderApi(); // 创建交易实例
+    // g_pTradeUserApi = CThostFtdcTraderApi::CreateFtdcTraderApi(); // 创建交易实例
     // CThostFtdcTraderSpi *pTradeSpi = new CustomTradeSpi;
-    CustomTradeSpi *pTradeSpi = new CustomTradeSpi;               // 创建交易回调实例
+    CustomTradeSpi *pTradeSpi = new CustomTradeSpi; // 创建交易回调实例
+    pTradeSpi->init( gTradeFrontAddr );
+    /*
     g_pTradeUserApi->RegisterSpi( pTradeSpi );                    // 注册事件类
     g_pTradeUserApi->SubscribePublicTopic( THOST_TERT_RESTART );  // 订阅公共流
     g_pTradeUserApi->SubscribePrivateTopic( THOST_TERT_RESTART ); // 订阅私有流
     g_pTradeUserApi->RegisterFront( gTradeFrontAddr );            // 设置交易前置地址
     g_pTradeUserApi->Init();                                      // 连接运行
+    */
 
     // 等到线程退出
     g_pMdUserApi->Join();

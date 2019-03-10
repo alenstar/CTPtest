@@ -17,6 +17,18 @@ extern std::unordered_map<std::string, TickToKlineHelper> g_KlineHash; // k线�
 
 // ---- ctp_api回调函数 ---- //
 // 连接成功应答
+CustomMdSpi::CustomMdSpi()
+    : CThostFtdcMdSpi() {
+    _pMdUserApi = CThostFtdcMdApi::CreateFtdcMdApi(); // 创建行情实例
+    _pMdUserApi->RegisterSpi( this );                 // 注册事件类
+}
+
+bool CustomMdSpi::init( const std::string &frontAddr ) {
+    _pMdUserApi->RegisterFront( const_cast<char *>( frontAddr.data() ) ); // 设置行情前置地址
+    _pMdUserApi->Init();
+    return true;
+}
+
 void CustomMdSpi::OnFrontConnected() {
     std::cout << "=====建立网络连接成功=====" << std::endl;
     // 开始登录
@@ -26,7 +38,7 @@ void CustomMdSpi::OnFrontConnected() {
     strcpy( loginReq.UserID, gInvesterID );
     strcpy( loginReq.Password, gInvesterPassword );
     static int requestID = 0; // 请求编号
-    int        rt        = g_pMdUserApi->ReqUserLogin( &loginReq, requestID );
+    int        rt        = _pMdUserApi->ReqUserLogin( &loginReq, requestID );
     if ( !rt )
         std::cout << ">>>>>>发送登录请求成功" << std::endl;
     else
@@ -56,7 +68,7 @@ void CustomMdSpi::OnRspUserLogin( CThostFtdcRspUserLoginField *pRspUserLogin, CT
         std::cout << "经纪商： " << pRspUserLogin->BrokerID << std::endl;
         std::cout << "帐户名： " << pRspUserLogin->UserID << std::endl;
         // 开始订阅行情
-        int rt = g_pMdUserApi->SubscribeMarketData( g_pInstrumentID, instrumentNum );
+        int rt = _pMdUserApi->SubscribeMarketData( g_pInstrumentID, instrumentNum );
         if ( !rt )
             std::cout << ">>>>>>发送订阅行情请求成功" << std::endl;
         else
@@ -188,7 +200,7 @@ void CustomMdSpi::OnRtnDepthMarketData( CThostFtdcDepthMarketDataField *pDepthMa
     g_KlineHash[ instrumentKey ].KLineFromRealtimeData( pDepthMarketData );
 
     // 取消订阅行情
-    // int rt = g_pMdUserApi->UnSubscribeMarketData(g_pInstrumentID,
+    // int rt = _pMdUserApi->UnSubscribeMarketData(g_pInstrumentID,
     // instrumentNum); if (!rt) 	std::cout << ">>>>>>发送取消订阅行情请求成功" <<
     // std::endl; else 	std::cerr << "--->>>发送取消订阅行情请求失败" <<
     // std::endl;
